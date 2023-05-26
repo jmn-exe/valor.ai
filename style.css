@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 *{
+
     font-family: 'Inter', sans-serif;
     color: rgb(25, 25, 25);
     /*border: 1px dotted grey;*/
@@ -22,7 +23,7 @@ body{
     left:0;
     height: 100vh;
     width: 100vw;
-    background-color: rgba(255, 255, 255, 0.945);
+    background-color: rgba(255, 255, 255, 0.966);
 }
 .home-right-box{
     height:100%;
@@ -97,4 +98,74 @@ input{
 }
 .register-btn{
     background-color: transparent;
+}
+
+
+/* Upload Page */
+.top-header{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.upload-container{
+    padding: 40px 50px;
+    height: calc(100vh - 80px);
+    width: calc(100vw - 100px);
+}
+.logo-title{
+    font-weight: 600;
+    font-size: 18px;
+}
+.section-nav{
+    padding-top: 70px;
+    display:flex;
+    flex-direction: column;
+    max-width: 300px;
+    width: 100%;
+}
+.section-nav > a{
+    margin-bottom: 45px;
+    color:rgb(173, 173, 173);
+    font-weight: 500;
+}
+.current-page{
+    color: black !important;
+}
+a{
+    text-decoration: none;
+}
+.vertical-line{
+    border-left: 1px solid #ccc;
+    margin: 0px 10px;
+    min-height: 100%;
+}
+.main-body{
+    padding-top: 30px;
+    display: flex;
+    flex-direction: row;
+    height: calc(100%-30px);
+}
+.section-upload{
+    width: 100%;
+    height: calc(100%);
+    padding-top: 20px;
+}
+.upload-box{
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-start;
+}
+.upload-drag-drop{
+    margin:30px;
+    border: 1px dashed #ccc;
+    min-height: 300px;
+    max-height: 500px;
+    min-width: 500px;
+}
+.button-style{
+    font-size: 14px;
+    height: 48px;
+    font-weight: 800;
+    background-color: rgb(197, 197, 197);
+    padding: 0px 20px;
 }
