@@ -341,6 +341,7 @@ a{
 }
 .section-summary{
     padding: 30px;
+    width: 100%;
 }
 .section-title{
     font-size: 24px;
@@ -369,4 +370,25 @@ table, tr, td, th{
 }
 .summary-instance-info tr td:nth-child(2){
     text-align: right;
+}
+.history-container{
+    display:flex;
+    flex-direction: column;
+    min-width: 100%;
+    margin-top: 30px;
+}
+.history-table{
+    width: 100%;
+    text-align: left;
+}
+.history-table tr, .history-table tr th, .history-table{
+    border: 1px solid grey;
+}
+.history-table tr th, .history-table tr td{
+    padding: 6px 3px;
+    border:1px solid #ccc;
+    border-style: solid hidden;
+}
+.history-table tr td:nth-child(1){
+    font-weight: 600;
 }
