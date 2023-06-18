@@ -9,3 +9,8 @@ function checkPopupPos(mistake){
         popup.style.top = popupPos + "px";
     }
 }
+
+function showConfirmation(){
+    var confirmationBox = document.getElementById("confirmationBox");
+    confirmationBox.style.display = "inline";
+}

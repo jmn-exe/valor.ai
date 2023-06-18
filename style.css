@@ -80,7 +80,7 @@ button{
     flex-direction: row;
     justify-content: space-evenly;
 }
-.login-button-box > button{
+.login-button-box > button, .login-button > a{
     width: 100%;
     height: 48px;
     font-size: 14px;
@@ -178,6 +178,7 @@ a{
     font-weight: 600;
     background-color: transparent;
     padding:0;
+    vertical-align: middle;
 }
 
 /* Analysis Page */
@@ -185,7 +186,11 @@ a{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    vertical-align: middle;
     width: 100%;
+}
+.nav-button > a{
 }
 .flex-column{
     flex-direction: column !important;
@@ -391,4 +396,40 @@ table, tr, td, th{
 }
 .history-table tr td:nth-child(1){
     font-weight: 600;
+}
+.confirmation-box{
+    position: absolute;
+}
+.dim-background{
+    height: 100vh;
+    width: 100vw;
+    background-color:rgba(0,0,0,0.5);
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.save-box{
+    background-color: white;
+    padding: 20px;
+}
+.save-box div:nth-child(1){
+    margin: 15px;
+}
+.confirmation-box{
+    position:absolute;
+    display:none;
+}
+.confirmation-button{
+    display:flex;
+    justify-content: space-evenly;
+}
+.confirmation-button button{
+    padding:10px 15px;
+}
+.confirmation-save{
+    font-weight:600;
+}
+.confirmation-discard{
+    background-color: rgb(214, 0, 0);
+    color:rgb(255, 255, 255)
 }
