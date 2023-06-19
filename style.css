@@ -41,9 +41,7 @@ body{
     transition:all 1s ease-in-out;
     opacity:1;
 }
-.fade-animation{
-    opacity: 0;
-}
+.fade-animation{ opacity: 0; }
 .home-right-box{
     height:100%;
     flex-grow: 1;

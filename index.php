@@ -20,6 +20,7 @@
             header("location: upload.php");
         }
     ?>
+
     <div class="white-background"></div>
     <div class="main-container flex-center">
         <div class="home-container">
@@ -29,7 +30,7 @@
             </div>
             <div class="home-right-box flex-center">
                 <div class="login-container flex-center">
-                    <form class="login-box" action="./login.php" method="post">
+                    <form class="login-box" action="./php/login.php" method="post">
                         <div class="login-title">
                             Login to your account
                         </div>

@@ -1,5 +1,5 @@
 <?php
-require_once("./php/class.php");
+require_once("./class.php");
 $id = trim($_POST["uname"]);
 $pwd = trim($_POST["upwd"]);
 //echo($id);
@@ -22,7 +22,7 @@ if(password_verify($pwd,$result[1])){
     $_SESSION["loggedin"] = true;
     $_SESSION["username"] = $id;
     
-    header("location: upload.php");
+    header("location: ../upload.php");
 }else{
     echo "something is wrong lol";
 }

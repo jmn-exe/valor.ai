@@ -20,8 +20,8 @@
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
-            <a href="" class="logo-title">Valor.ai</a>
-            <div class="logged-user">username</div>
+            <a href="./upload.php" class="logo-title">Valor.ai</a>
+            <a href="./php/logout.php" class="logged-user">username</a>
         </div>
         <div class="main-body">
             <div class="section-nav">

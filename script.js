@@ -22,5 +22,8 @@ function showMessage(msg){
     document.body.appendChild(fadingMsg);
     setTimeout(function(){
         fadingMsg.classList.add("fade-animation");
+        setTimeout(function(){
+            fadingMsg.remove();
+        },1000)
     },1000);
 }
