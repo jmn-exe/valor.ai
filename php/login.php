@@ -17,14 +17,15 @@ $MYSQL = new MYSQL($host,$user,$pass,$dbname);
 //$insertq = 'INSERT INTO user(id,pwd) VALUES("usertest","'.$password.'");';
 $verifyquery = 'SELECT * from user WHERE id="'.$id.'"';
 $result = $MYSQL->execQuery($verifyquery)->fetch_row();
+session_start();
 if(password_verify($pwd,$result[1])){
-    session_start();
     $_SESSION["loggedin"] = true;
     $_SESSION["username"] = $id;
     
     header("location: ../upload.php");
 }else{
-    echo "something is wrong lol";
+    $_SESSION["wronglogin"] = true;
+    header("location: ../index.php");
 }
 
 

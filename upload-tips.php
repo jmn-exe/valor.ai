@@ -7,6 +7,13 @@
     <title>Valor.ai | Tips</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <?php
+        session_start();
+        if(!isset($_SESSION["loggedin"])){
+            $_SESSION["unauthorized"] = true;
+            header("location: index.php");
+        }
+    ?>
 </head>
 <body>
     <div class="confirmation-box" id="confirmationBox">
@@ -24,7 +31,7 @@
     <div class="body-container">
         <div class="top-header">
             <a href="" class="logo-title">Valor.ai</a>
-            <div class="logged-user">username</div>
+            <a href="./php/logout.php" class="logged-user"><?php echo $_SESSION["username"]; ?></a>
         </div>
         <div class="main-body flex-column">
             <form class="nav-button">

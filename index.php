@@ -19,6 +19,10 @@
         if(isset($_SESSION["loggedin"])){
             header("location: upload.php");
         }
+        if(isset($_SESSION["wronglogin"])){
+            unset($_SESSION["wronglogin"]);
+            echo '<script>showMessage("Wrong login info!")</script>';
+        }
     ?>
 
     <div class="white-background"></div>
@@ -38,7 +42,7 @@
                             <input type="text" name="uname" id="username" placeholder="Username" class="login-input">
                         </div>
                         <div class="login-password-box">
-                            <input type="password" name="upwd" id="password" placeholder="Password" class="login-input">
+                            <input type="password" name="upwd" id="password" placeholder="Password" class="login-input"  autocomplete="off">
                         </div>
                         <div class="login-button-box">
                             <button type="submit"  class="login-btn">Login</button>

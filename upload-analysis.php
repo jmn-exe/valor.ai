@@ -7,16 +7,23 @@
     <title>Valor.ai | Analysis</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <?php
+        session_start();
+        if(!isset($_SESSION["loggedin"])){
+            $_SESSION["unauthorized"] = true;
+            header("location: index.php");
+        }
+    ?>
 </head>
 <body>
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
             <a href="" class="logo-title">Valor.ai</a>
-            <div class="logged-user">username</div>
+            <a href="./php/logout.php" class="logged-user"><?php echo $_SESSION["username"]; ?></a>
         </div>
         <div class="main-body flex-column">
-            <form class="nav-button" action="./upload-tips.html" method="post">
+            <form class="nav-button" action="./upload-tips.php" method="get">
                 <button type="button" class="button-nobox-style" onclick="history.back()">⟵ Back</button>
                 <button type="submit" class="button-style">Next</button>
             </form>

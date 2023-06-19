@@ -9,7 +9,7 @@
     <script src="script.js"></script>
     <?php
         session_start();
-        if($_SESSION["loggedin"] == false){
+        if(!isset($_SESSION["loggedin"])){
             $_SESSION["unauthorized"] = true;
             header("location: index.php");
         }
@@ -21,18 +21,22 @@
     <div class="body-container">
         <div class="top-header">
             <a href="./upload.php" class="logo-title">Valor.ai</a>
-            <a href="./php/logout.php" class="logged-user">username</a>
+            <a href="./php/logout.php" class="logged-user">
+                <?php
+                echo $_SESSION["username"];
+                ?>
+            </a>
         </div>
         <div class="main-body">
             <div class="section-nav">
                 <a href="" class="current-page">Upload</a>
-                <a href="./summary.html">Summary</a>
-                <a href="./match_history.html">Match history</a>
+                <a href="./summary.php">Summary</a>
+                <a href="./match_history.php">Match history</a>
                 <a href="">Learn</a>
             </div>
             <span class="vertical-line"></span>
             <div class="section-upload">
-                <form class="upload-box flex-center" action="./upload-analysis.html" method="post">
+                <form class="upload-box flex-center" action="./upload-analysis.php" method="get">
                     <div class="upload-drag-drop"></div>
                     <button type="submit" class="button-style">Upload</button>
                 </form>

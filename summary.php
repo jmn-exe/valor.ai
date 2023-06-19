@@ -6,19 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valor.ai | Summary</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <?php
+        session_start();
+        if(!isset($_SESSION["loggedin"])){
+            $_SESSION["unauthorized"] = true;
+            header("location: index.php");
+        }
+    ?>
 </head>
 <body>
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
-            <a href="" class="logo-title">Valor.ai</a>
-            <div class="logged-user">username</div>
+            <a href="./upload.php" class="logo-title">Valor.ai</a>
+            <a href="./php/logout.php" class="logged-user"><?php echo $_SESSION["username"]; ?></a>
         </div>
         <div class="main-body">
             <div class="section-nav">
-                <a href="./upload.html">Upload</a>
+                <a href="./upload.php">Upload</a>
                 <a href="" class="current-page">Summary</a>
-                <a href="./match_history.html">Match history</a>
+                <a href="./match_history.php">Match history</a>
                 <a href="">Learn</a>
             </div>
             <span class="vertical-line"></span>
