@@ -22,7 +22,7 @@ if(password_verify($pwd,$result[1])){
     $_SESSION["loggedin"] = true;
     $_SESSION["username"] = $id;
     
-    header("location: upload.html");
+    header("location: upload.php");
 }else{
     echo "something is wrong lol";
 }

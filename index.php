@@ -6,8 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valor.ai | Home</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+
 </head>
 <body>
+    <?php
+        session_start();
+        if(isset($_SESSION["unauthorized"])){
+            unset($_SESSION["unauthorized"]);
+            echo '<script>showMessage("Please log in first!")</script>';
+        }
+        if(isset($_SESSION["loggedin"])){
+            header("location: upload.php");
+        }
+    ?>
     <div class="white-background"></div>
     <div class="main-container flex-center">
         <div class="home-container">

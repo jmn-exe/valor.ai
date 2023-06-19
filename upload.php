@@ -6,12 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valor.ai | Upload</title>
     <link rel="stylesheet" href="style.css">
-    
+    <script src="script.js"></script>
+    <?php
+        session_start();
+        if($_SESSION["loggedin"] == false){
+            $_SESSION["unauthorized"] = true;
+            header("location: index.php");
+        }
+    ?>
 </head>
 <body>
-    <?php
-    echo "bruh"; 
-    ?>
+    
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
