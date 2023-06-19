@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valor.ai | Upload</title>
     <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
+    <?php
+    echo "bruh"; 
+    ?>
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
