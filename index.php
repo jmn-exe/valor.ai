@@ -7,7 +7,6 @@
     <title>Valor.ai | Home</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
-
 </head>
 <body>
     <?php

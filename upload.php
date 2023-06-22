@@ -15,8 +15,7 @@
         }
     ?>
 </head>
-<body>
-    
+<body>  
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
@@ -36,8 +35,10 @@
             </div>
             <span class="vertical-line"></span>
             <div class="section-upload">
-                <form class="upload-box flex-center" action="./upload-analysis.php" method="get">
-                    <div class="upload-drag-drop"></div>
+                <form class="upload-box flex-center" action="./upload-analysis.php" method="get" enctype='multipart/form-data'>
+                    <div class="upload-drag-drop">
+                        <input type="file" class="upload-input" name="videofile" id="videofile" accept="video/*">
+                    </div>
                     <button type="submit" class="button-style">Upload</button>
                 </form>
             </div>

@@ -7,6 +7,7 @@
     <title>Valor.ai | Tips</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    
     <?php
         session_start();
         if(!isset($_SESSION["loggedin"])){
@@ -14,6 +15,7 @@
             header("location: index.php");
         }
     ?>
+
 </head>
 <body>
     <div class="confirmation-box" id="confirmationBox">
