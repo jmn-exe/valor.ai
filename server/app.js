@@ -27,23 +27,37 @@ const ctx = temp.getContext("2d");
 temp.width = 256;
 temp.height = 256;
 
-async function getImage(imagePath){
+var batchSize = 16;
+var startData,endData;
+var startPred,endPred;
+
+async function getImage(imagePath,imageNum){
   //i need to find a way on how to feed the images extracted from ffmpeg into the canvas loadImage function, predict and loop.
-  const image = await loadImage(imagePath);
-  ctx.drawImage(image,0,0,256,256);
+  startData = Date.now();
+  let tensorArr = new Array();
+  for(var i = 1; i <= imageNum; i++){
+    const image = await loadImage(imagePath + '/temp'+ i + '.jpg');
+    ctx.drawImage(image,0,0,256,256);
+    const imageTensor = tf.browser.fromPixels(temp);
+    const resizedTensor = tf.image.resizeBilinear(imageTensor, [256, 256]).toFloat();
+    //const batchedTensor = normalizedTensor.expandDims(0);
+    tensorArr.push(resizedTensor);
+  }
+  const batchTensor = tf.stack(tensorArr);
+  endData = Date.now();
+  console.log("Time to process data: "+ (endData - startData));
   //const { data, width, height } = imageData;
   //const imageTensor = tf.tensor4d(videoFile, [1, height, width, 3]);
-  const imageTensor = tf.browser.fromPixels(temp)
-  const resizedTensor = tf.image.resizeBilinear(imageTensor, [256, 256]).toFloat();
-  const normalizedTensor = resizedTensor.div(tf.scalar(255));
-  const batchedTensor = normalizedTensor.expandDims(0);
+  startPred = Date.now();
   const getModel = tfn.io.fileSystem("./json_model/model.json");
-
+  
   const model = await tf.loadLayersModel(getModel);
-  const predictions = model.predict(batchedTensor);
+  const predictions = model.predictOnBatch(batchTensor);
   predictions.print();
   const predArray = await predictions.array();
   console.log(className[predArray[0].indexOf(Math.max(...predArray[0]))]);
+  endPred = Date.now();
+  console.log("Time to do prediction: " + (endPred - startPred));
 }
 //getImage();
 
@@ -123,15 +137,27 @@ ffmpeg.setFfmpegPath(ffmpegStatic);
 
 const videoDuration = await getVideoDurationInSeconds(videoPath);
 var currentTime = 0;
+var currentSS = 1;
+var startSS,endSS;
 async function getSS(){
+  startSS = Date.now();
   ffmpeg(videoPath).fps(30)
     .on('end', async () => {
+      if(currentSS == batchSize || currentTime >= videoDuration){
+        endSS = Date.now();
+        console.log("Time to SS images:"+ (endSS - startSS));
+        await getImage(outputDir,currentSS);
+        startSS = Date.now();
+        currentSS = 1;
+      }
       if(currentTime < videoDuration){
+        currentSS += 1;
         //console.log(currentTime);
-        await getImage(outputDir + '/temp.jpg');
-        currentTime += 1/30;
+        
+        currentTime += 1/10;
         getSS();
       }
+
     })
     .on('error', (err) => {
       console.error('Error:', err);
@@ -139,9 +165,10 @@ async function getSS(){
     .screenshots({
       // Will take screens at 20%, 40%, 60% and 80% of the video
       timestamps: [currentTime],
-      filename: 'temp.jpg',
+      filename: 'temp'+currentSS+'.jpg',
       size: '?x256',
       folder : outputDir
     }); // Output file pattern, %d represents the frame number
 }
+
 getSS();
