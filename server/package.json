@@ -19,6 +19,8 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^5.1.0",
     "fluent-ffmpeg": "^2.1.2",
+    "get-video-duration": "^4.1.0",
+    "jsdom": "^22.1.0",
     "node-fetch": "^3.3.1"
   }
 }

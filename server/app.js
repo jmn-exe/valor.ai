@@ -3,8 +3,13 @@ import * as tf from "@tensorflow/tfjs"
 import { createCanvas, loadImage } from "canvas"
 import ffmpeg from "fluent-ffmpeg"
 import ffmpegStatic from "ffmpeg-static"
+import { getVideoDurationInSeconds } from 'get-video-duration'
 import fs from 'fs'
+import jsdom from 'jsdom';
 //const axios = require("axios");
+
+const {JSDOM} = jsdom;
+
 class L2 {
 
   static className = 'L2';
@@ -17,85 +22,31 @@ tf.serialization.registerClass(L2);
 
 const className = ['crosshair','dry','whiff'];
 
-async function getImage(){
-  //i need to find a way on how to feed the images extracted from ffmpeg into the canvas loadImage function, predict and loop.
-  const temp = createCanvas();
-  const ctx = temp.getContext('2d');
-  const image = await loadImage("C:\\xampp\\htdocs\\valor.ai\\server\\whiff4.jpg");
+const temp = createCanvas();
+const ctx = temp.getContext("2d");
+temp.width = 256;
+temp.height = 256;
 
-  temp.width = image.width;
-  temp.height = image.height;
+async function getImage(imagePath){
+  //i need to find a way on how to feed the images extracted from ffmpeg into the canvas loadImage function, predict and loop.
+  const image = await loadImage(imagePath);
   ctx.drawImage(image,0,0,256,256);
   //const { data, width, height } = imageData;
-  //console.log(data.length);
-  //const numPixels = width * height;
-  //const inputData = new Float32Array(numPixels * 3);
-  /*
-  for (let i = 0; i < numPixels; i++) {
-    inputData[i * 3] = data[i * 4]// Red channel
-    inputData[i * 3 + 1] = data[i * 4 + 1]// Green channel
-    inputData[i * 3 + 2] = data[i * 4 + 2]// Blue channel
-  }*/
-
-  // Reshape the input data to match the expected shape
-  //for(var i = 0; i < )
-  //console.log(data);
-  //const imageTensor = tf.tensor4d(inputData, [1, height, width, 3]);
+  //const imageTensor = tf.tensor4d(videoFile, [1, height, width, 3]);
   const imageTensor = tf.browser.fromPixels(temp)
-  //console.log(imageTensor);
   const resizedTensor = tf.image.resizeBilinear(imageTensor, [256, 256]).toFloat();
-  //console.log(resizedTensor);
   const normalizedTensor = resizedTensor.div(tf.scalar(255));
-  //console.log(normalizedTensor);
-  // Add an extra dimension to match the input shape expected by the model
   const batchedTensor = normalizedTensor.expandDims(0);
   const getModel = tfn.io.fileSystem("./json_model/model.json");
-  //console.log(getModel);
-  const model = await tf.loadLayersModel(getModel);
-    // Reshape the input tensor to match the expected shape
-  const predictions = model.predict(batchedTensor);
 
+  const model = await tf.loadLayersModel(getModel);
+  const predictions = model.predict(batchedTensor);
   predictions.print();
   const predArray = await predictions.array();
   console.log(className[predArray[0].indexOf(Math.max(...predArray[0]))]);
-  //console.log(model);*/
 }
-getImage();
+//getImage();
 
-//----------------------------------------------------
-/*
-async function extractImage(){
-  ffmpeg.setFfmpegPath(ffmpegStatic);
-  ffmpeg()
-
-  // Input file
-  .input('./example.mp4')
-
-  // Audio bit rate
-  .outputOptions('-ab', '192k')
-
-  // Output file
-  .saveToFile('audio.mp3')
-
-  // Log the percentage of work completed
-  .on('progress', (progress) => {
-    if (progress.percent) {
-      console.log(`Processing: ${Math.floor(progress.percent)}% done`);
-    }
-  })
-
-  // The callback that is run when FFmpeg is finished
-  .on('end', () => {
-    console.log('FFmpeg has finished.');
-  })
-
-  // The callback that is run when FFmpeg encountered an error
-  .on('error', (error) => {
-    console.error(error);
-  });
-}
-
-extractImage();*/
 //---------------------------------------------------------------
 /*
 function extractFrames(videoPath, outputDir, callback) {
@@ -159,3 +110,38 @@ ffmpeg(videoPath).fps(30).size('?x256')
     });
   })
   .run();*/
+
+
+const videoPath = './example.mp4'; // Replace with the path to your video file
+const outputDir = './tempframes'; // Replace with the desired output directory
+
+function processFrame(framePath) {
+  // Your frame processing logic here
+  console.log('Processing frame:', framePath);
+}
+ffmpeg.setFfmpegPath(ffmpegStatic);
+
+const videoDuration = await getVideoDurationInSeconds(videoPath);
+var currentTime = 0;
+async function getSS(){
+  ffmpeg(videoPath).fps(30)
+    .on('end', async () => {
+      if(currentTime < videoDuration){
+        //console.log(currentTime);
+        await getImage(outputDir + '/temp.jpg');
+        currentTime += 1/30;
+        getSS();
+      }
+    })
+    .on('error', (err) => {
+      console.error('Error:', err);
+    })
+    .screenshots({
+      // Will take screens at 20%, 40%, 60% and 80% of the video
+      timestamps: [currentTime],
+      filename: 'temp.jpg',
+      size: '?x256',
+      folder : outputDir
+    }); // Output file pattern, %d represents the frame number
+}
+getSS();
