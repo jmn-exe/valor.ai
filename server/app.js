@@ -37,9 +37,9 @@ async function getImage(imagePath,imageNum){
   let tensorArr = new Array();
   for(var i = 1; i <= imageNum; i++){
     const image = await loadImage(imagePath + '/temp'+ i + '.jpg');
-    ctx.drawImage(image,0,0,256,256);
+    ctx.drawImage(image,0,0,224,224);
     const imageTensor = tf.browser.fromPixels(temp);
-    const resizedTensor = tf.image.resizeBilinear(imageTensor, [256, 256]).toFloat();
+    const resizedTensor = tf.image.resizeBilinear(imageTensor, [224, 224]).toFloat();
     //const batchedTensor = normalizedTensor.expandDims(0);
     tensorArr.push(resizedTensor);
   }
@@ -49,15 +49,18 @@ async function getImage(imagePath,imageNum){
   //const { data, width, height } = imageData;
   //const imageTensor = tf.tensor4d(videoFile, [1, height, width, 3]);
   startPred = Date.now();
-  const getModel = tfn.io.fileSystem("./json_model/model.json");
+  const getModel = tfn.io.fileSystem("./json_model_graph/model.json");
   
-  const model = await tf.loadLayersModel(getModel);
-  const predictions = model.predictOnBatch(batchTensor);
+  const model = await tf.loadGraphModel(getModel);
+  const predictions = model.predict(batchTensor,{
+    batchSize: batchSize
+  });
   predictions.print();
   const predArray = await predictions.array();
   console.log(className[predArray[0].indexOf(Math.max(...predArray[0]))]);
   endPred = Date.now();
   console.log("Time to do prediction: " + (endPred - startPred));
+
 }
 //getImage();
 
@@ -139,10 +142,11 @@ const videoDuration = await getVideoDurationInSeconds(videoPath);
 var currentTime = 0;
 var currentSS = 1;
 var startSS,endSS;
+
 async function getSS(){
   startSS = Date.now();
   ffmpeg(videoPath).fps(30)
-    .on('end', async () => {
+  .on('end', async () => {
       if(currentSS == batchSize || currentTime >= videoDuration){
         endSS = Date.now();
         console.log("Time to SS images:"+ (endSS - startSS));
@@ -166,7 +170,7 @@ async function getSS(){
       // Will take screens at 20%, 40%, 60% and 80% of the video
       timestamps: [currentTime],
       filename: 'temp'+currentSS+'.jpg',
-      size: '?x256',
+      size: '?x224',
       folder : outputDir
     }); // Output file pattern, %d represents the frame number
 }
