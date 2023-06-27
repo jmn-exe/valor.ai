@@ -23,7 +23,6 @@
             echo '<script>showMessage("Wrong login info!")</script>';
         }
     ?>
-
     <div class="white-background"></div>
     <div class="main-container flex-center">
         <div class="home-container">
