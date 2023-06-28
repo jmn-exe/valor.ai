@@ -10,18 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 </head>
 <body>
-    <script>
-    $(document).ready(() => {
-        // Fetch the username using AJAX
-        $.get('/api/wronglogin', (data) => {
-            if(data.wronglogin){
-                alert("Wrong login info!");
-                $.post('/api/setwrongloginfalse',()=>{});
-                //showMessage("Wrong login info!");
-            }
-        })
-    });
-    </script>
+    
     <div class="white-background"></div>
     <div class="main-container flex-center">
         <div class="home-container">
@@ -50,5 +39,23 @@
             </div>
         </div>
     </div>
+    <script>
+        function showMessage(msg){
+            var fadingMsg = document.createElement("div");
+            fadingMsg.innerHTML = msg;
+            fadingMsg.classList.add("fading-msg");
+            console.log("called?");
+            document.body.appendChild(fadingMsg);
+            setTimeout(function(){
+                fadingMsg.classList.add("fade-animation");
+                setTimeout(function(){
+                    fadingMsg.remove();
+                },1000)
+            },1000);
+        }
+        <% if(wronglogin){ %>
+            showMessage("Wrong login info!");
+        <%}%>
+    </script>
 </body>
 </html>

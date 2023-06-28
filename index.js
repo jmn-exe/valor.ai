@@ -8,6 +8,8 @@ var mysql = require('mysql');
 var bcrypt = require('bcryptjs');
 const { isBuffer } = require('util');
 
+app.set('view engine', 'ejs');
+
 const dbHost = "localhost"
 const dbUser = "root";
 const dbPass = "";
@@ -35,12 +37,18 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', function (req, res) {
-  if(req.session.deletewronglogin){
-    delete req.session.wronglogin;
+app.get('/', (req, res) => {
+  if(req.session.unauthorized){
+    res.render('index',{unauthorized:true});
   }
-  console.log(req.session);
-  res.sendFile(path.join(__dirname, '/index.html'));
+  if(req.session.wronglogin){
+    console.log('bruh');
+    req.session.wronglogin = false;
+    res.render('index', { wronglogin: true });
+  }else{
+    res.render('index', { wronglogin: false });
+  }
+  
 });
 
 app.post('/login', (req, res) => {
@@ -55,7 +63,7 @@ app.post('/login', (req, res) => {
       if(err) throw(err);
       if(match){
         req.session.user = username;
-        res.send('okay!!');
+        res.redirect('/upload');
       }else{
         req.session.wronglogin = true;
         res.redirect('/');
@@ -63,6 +71,15 @@ app.post('/login', (req, res) => {
       }
     });
   });
+});
+
+app.get('/upload',(req,res)=>{
+  if(req.session.user){
+    res.render('upload',{username: req.session.user});
+  }else{
+    res.session.unauthorized;
+    res.redirect('/');
+  }
 });
 
 app.get('/api/wronglogin', (req, res) => {
