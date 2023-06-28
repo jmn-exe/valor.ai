@@ -9,20 +9,6 @@
     <script src="script.js"></script>
 </head>
 <body>
-    <?php
-        session_start();
-        if(isset($_SESSION["unauthorized"])){
-            unset($_SESSION["unauthorized"]);
-            echo '<script>showMessage("Please log in first!")</script>';
-        }
-        if(isset($_SESSION["loggedin"])){
-            header("location: upload.php");
-        }
-        if(isset($_SESSION["wronglogin"])){
-            unset($_SESSION["wronglogin"]);
-            echo '<script>showMessage("Wrong login info!")</script>';
-        }
-    ?>
     <div class="white-background"></div>
     <div class="main-container flex-center">
         <div class="home-container">

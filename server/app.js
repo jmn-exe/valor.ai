@@ -5,10 +5,8 @@ import ffmpeg from "fluent-ffmpeg"
 import ffmpegStatic from "ffmpeg-static"
 import { getVideoDurationInSeconds } from 'get-video-duration'
 import fs from 'fs'
-import jsdom from 'jsdom';
-//const axios = require("axios");
 
-const {JSDOM} = jsdom;
+//const axios = require("axios");
 
 class L2 {
 
@@ -30,8 +28,10 @@ temp.height = 256;
 var batchSize = 16;
 var startData,endData;
 var startPred,endPred;
+var mistakeArr = new Array();
+var i = 0;
 
-async function getImage(imagePath,imageNum){
+async function getImage(imagePath,imageNum,timeArray){
   //i need to find a way on how to feed the images extracted from ffmpeg into the canvas loadImage function, predict and loop.
   startData = Date.now();
   let tensorArr = new Array();
@@ -50,114 +50,57 @@ async function getImage(imagePath,imageNum){
   //const imageTensor = tf.tensor4d(videoFile, [1, height, width, 3]);
   startPred = Date.now();
   const getModel = tfn.io.fileSystem("./json_model_graph/model.json");
-  
   const model = await tf.loadGraphModel(getModel);
   const predictions = model.predict(batchTensor,{
     batchSize: batchSize
   });
-  predictions.print();
+  //predictions.print();
   const predArray = await predictions.array();
-  console.log(className[predArray[0].indexOf(Math.max(...predArray[0]))]);
+  //console.log(timeArray.length);
+  //console.log(className[predArray[0].indexOf(Math.max(...predArray[0]))]);
   endPred = Date.now();
+  predArray.forEach((pred)=>{
+    var maxPred = Math.max(...pred);
+    if(maxPred > 0.5){
+      console.log(maxPred);
+      mistakeArr.push([className[pred.indexOf(maxPred)],timeArray[predArray.indexOf(pred)]]);
+      //i += 1;
+    }
+    //console.log(maxPred);
+  });
+  console.log(mistakeArr);
   console.log("Time to do prediction: " + (endPred - startPred));
-
 }
 //getImage();
 
-//---------------------------------------------------------------
-/*
-function extractFrames(videoPath, outputDir, callback) {
-  // Create the output directory if it doesn't exist
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
-  }
-  ffmpeg.setFfmpegPath(ffmpegStatic);
-  ffmpeg(videoPath)
-    .on('filenames', (filenames) => {
-      // Process each extracted frame
-      filenames.forEach((filename) => {
-        const imagePath = `${outputDir}/${filename}`;
-        // Call the callback function with the path to the extracted frame
-        callback(imagePath);
-      });
-    })
-    .on('end', () => {
-      console.log('Frame extraction complete');
-    })
-    .screenshots({
-      timestamps: ['1'], // Extract frames at specific timestamps (e.g., every second)
-      filename: 'frame-%i.png', // Output filename pattern
-      folder: outputDir, // Output directory
-    });
-}
-
-// Usage example
-const videoPath = './example.mp4';
-const outputDir = './tempframes';
-
-extractFrames(videoPath, outputDir, (imagePath) => {
-  // Process each extracted frame
-  console.log(`Processing frame: ${imagePath}`);
-  // Add your custom processing logic here
-});*/
-
 //-------------------------------------------------------------
-/*
-ffmpeg.setFfmpegPath(ffmpegStatic);
-const videoPath = './example.mp4';
-const outputDir = './tempframes'; // Replace with the directory where you want to save the frames
-
-function processFrame(frameData){
-  console.log("bruh");
-  return result;
-}
-
-ffmpeg(videoPath).fps(30).size('?x256')
-  .output(outputDir + '/frame-%d.png') // Output file pattern, %d represents the frame number
-  .on('end', () => console.log('Frame extraction complete'))
-  .on('error', err => console.error('Error:', err))
-  .on('filenames', filenames => {
-    // Process each frame before saving
-    filenames.forEach(filename => {
-      const frameData = fs.readFileSync(`${outputDir}/${filename}`);
-      // Call the processFrame function
-      const processedFrameData = processFrame(frameData);
-      // Save the processed frame data back to the file
-      fs.writeFileSync(`${outputDir}/${filename}`, processedFrameData);
-    });
-  })
-  .run();*/
-
-
 const videoPath = './example.mp4'; // Replace with the path to your video file
 const outputDir = './tempframes'; // Replace with the desired output directory
 
-function processFrame(framePath) {
-  // Your frame processing logic here
-  console.log('Processing frame:', framePath);
-}
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
 const videoDuration = await getVideoDurationInSeconds(videoPath);
 var currentTime = 0;
 var currentSS = 1;
 var startSS,endSS;
-
+var timestamps = new Array();
 async function getSS(){
   startSS = Date.now();
   ffmpeg(videoPath).fps(30)
   .on('end', async () => {
+    timestamps.push(currentTime);
       if(currentSS == batchSize || currentTime >= videoDuration){
         endSS = Date.now();
         console.log("Time to SS images:"+ (endSS - startSS));
-        await getImage(outputDir,currentSS);
+
+        await getImage(outputDir,currentSS,timestamps);
         startSS = Date.now();
-        currentSS = 1;
+        currentSS = 0;
+        timestamps = [];
       }
       if(currentTime < videoDuration){
         currentSS += 1;
         //console.log(currentTime);
-        
         currentTime += 1/10;
         getSS();
       }
