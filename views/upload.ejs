@@ -5,30 +5,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valor.ai | Upload</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script src="script.js"></script>
 </head>
-<body>  
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-box">
+            <div>Uploading and processing video</div>
+            <div class="loader"></div>
+        </div>
+    </div>
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
-            <a href="./upload.php" class="logo-title">Valor.ai</a>
-            <a href="./php/logout.php" class="logged-user">
-            <script>
-            
-            </script>
+            <a href="/upload" class="logo-title">Valor.ai</a>
+            <a href="/logout" class="logged-user">
+            <%= username %>
             </a>
         </div>
         <div class="main-body">
             <div class="section-nav">
                 <a href="" class="current-page">Upload</a>
-                <a href="./summary.php">Summary</a>
-                <a href="./match_history.php">Match history</a>
+                <a href="/summary">Summary</a>
+                <a href="/match_history">Match history</a>
                 <a href="">Learn</a>
             </div>
             <span class="vertical-line"></span>
             <div class="section-upload">
-                <form class="upload-box flex-center" action="./upload-analysis.php" method="get" enctype='multipart/form-data'>
+                <form class="upload-box flex-center" id="uploadBox" enctype='multipart/form-data'>
                     <div class="upload-drag-drop">
                         <input type="file" class="upload-input" name="videofile" id="videofile" accept="video/*">
                     </div>
@@ -37,5 +41,24 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById("uploadBox").addEventListener('submit',(e)=>{
+            e.preventDefault();
+            document.getElementById("loadingScreen").style.display = 'block';
+            const inputFile = document.getElementById("videofile");
+            const file = inputFile.files[0];
+            if(file){
+                const formData = new FormData();
+                formData.append('file', file);
+                console.log(formData);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload_video');
+                xhr.send(formData);
+            }
+        })
+        <% if(typeof noaccess !== 'undefined' && noaccess == true){%>
+            showMessage("Please upload your video first!");
+        <%}%>
+    </script>
 </body>
 </html>

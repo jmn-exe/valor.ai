@@ -5,18 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valor.ai | Analysis</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <script src="script.js"></script>
 </head>
 <body>
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
-            <a href="" class="logo-title">Valor.ai</a>
-            <a href="./php/logout.php" class="logged-user"><?php echo $_SESSION["username"]; ?></a>
+            <a href="/upload" class="logo-title">Valor.ai</a>
+            <a href="/logout" class="logged-user"><%=username%></a>
         </div>
         <div class="main-body flex-column">
-            <form class="nav-button" action="./upload-tips.php" method="get">
+            <form class="nav-button" action="/upload_tips" method="get">
                 <button type="button" class="button-nobox-style" onclick="history.back()">⟵ Back</button>
                 <button type="submit" class="button-style">Next</button>
             </form>

@@ -45,7 +45,7 @@ async function getImage(imagePath,imageNum,timeArray){
   }
   const batchTensor = tf.stack(tensorArr);
   endData = Date.now();
-  console.log("Time to process data: "+ (endData - startData));
+  //console.log("Time to process data: "+ (endData - startData));
   //const { data, width, height } = imageData;
   //const imageTensor = tf.tensor4d(videoFile, [1, height, width, 3]);
   startPred = Date.now();
@@ -68,54 +68,68 @@ async function getImage(imagePath,imageNum,timeArray){
     }
     //console.log(maxPred);
   });
-  console.log(mistakeArr);
-  console.log("Time to do prediction: " + (endPred - startPred));
+  //console.log(mistakeArr);
+  console.log("boop");
+  //console.log("Time to do prediction: " + (endPred - startPred));
 }
 //getImage();
 
 //-------------------------------------------------------------
-const videoPath = './example.mp4'; // Replace with the path to your video file
+let videoPath;// Replace with the path to your video file
 const outputDir = './tempframes'; // Replace with the desired output directory
 
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
-const videoDuration = await getVideoDurationInSeconds(videoPath);
+let videoDuration;
+
 var currentTime = 0;
 var currentSS = 1;
 var startSS,endSS;
 var timestamps = new Array();
-async function getSS(){
-  startSS = Date.now();
-  ffmpeg(videoPath).fps(30)
-  .on('end', async () => {
-    timestamps.push(currentTime);
-      if(currentSS == batchSize || currentTime >= videoDuration){
-        endSS = Date.now();
-        console.log("Time to SS images:"+ (endSS - startSS));
+function getSS(){
+  return new Promise((resolve, reject) => {
+    startSS = Date.now();
+    ffmpeg(videoPath).fps(30)
+    .on('end', async () => {
+      timestamps.push(currentTime);
+        if(currentSS == batchSize || currentTime >= videoDuration){
+          endSS = Date.now();
+          //console.log("Time to SS images:"+ (endSS - startSS));
+          await getImage(outputDir,currentSS,timestamps);
+          startSS = Date.now();
+          currentSS = 0;
+          timestamps = [];
+        }
+        if(currentTime < videoDuration){
+          currentSS += 1;
+          //console.log(currentTime);
+          currentTime += 1/10;
+          resolve(getSS());
+        }else{
+          resolve();
+        }
 
-        await getImage(outputDir,currentSS,timestamps);
-        startSS = Date.now();
-        currentSS = 0;
-        timestamps = [];
-      }
-      if(currentTime < videoDuration){
-        currentSS += 1;
-        //console.log(currentTime);
-        currentTime += 1/10;
-        getSS();
-      }
-
+      })
+      .on('error', (err) => {
+        console.error('Error:', err);
+        reject(err);
+      })
+      .screenshots({
+        // Will take screens at 20%, 40%, 60% and 80% of the video
+        timestamps: [currentTime],
+        filename: 'temp'+currentSS+'.jpg',
+        size: '?x224',
+        folder : outputDir
+      }); // Output file pattern, %d represents the frame number
     })
-    .on('error', (err) => {
-      console.error('Error:', err);
-    })
-    .screenshots({
-      // Will take screens at 20%, 40%, 60% and 80% of the video
-      timestamps: [currentTime],
-      filename: 'temp'+currentSS+'.jpg',
-      size: '?x224',
-      folder : outputDir
-    }); // Output file pattern, %d represents the frame number
 }
 
-getSS();
+async function getMistakes(filePath){
+  videoPath = filePath;
+  videoDuration = await getVideoDurationInSeconds(videoPath);
+  await getSS();
+  console.log("BRUHHH");
+  return mistakeArr;
+}
+
+export { getMistakes };
