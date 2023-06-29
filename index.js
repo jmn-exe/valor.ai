@@ -130,12 +130,14 @@ app.get('/upload_analysis',(req,res)=>{
     req.session.noaccess = true;
     res.redirect('/upload');
   }
-    
 });
 
 app.get('/upload_tips',(req,res)=>{
   if(req.session.user){
-    res.render('upload-tips',{username: req.session.user});
+    res.render('upload-tips',{
+      username: req.session.user,
+      mistake: req.session.mistakearray
+    });
   }else{
     console.log("entered the unauthorized section");
     req.session.unauthorized = true;
@@ -197,6 +199,5 @@ app.post('/upload_video', upload.single('file') ,async (req,res)=>{
   req.session.tempvideo = pathForEJS;
   res.redirect('/upload_analysis');
 });
-
   
 app.listen(3000)
