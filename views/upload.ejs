@@ -42,8 +42,13 @@
         </div>
     </div>
     <script>
+    var havePrevented = false;
         document.getElementById("uploadBox").addEventListener('submit',(e)=>{
-            e.preventDefault();
+            if(!havePrevented){
+                havePrevented = true;
+                e.preventDefault();
+            }
+            
             document.getElementById("loadingScreen").style.display = 'block';
             const inputFile = document.getElementById("videofile");
             const file = inputFile.files[0];
@@ -53,7 +58,13 @@
                 console.log(formData);
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', '/upload_video');
+                xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    window.location.href = '/upload_analysis';
+                }
+                };
                 xhr.send(formData);
+                console.log("lololol");
             }
         })
         <% if(typeof noaccess !== 'undefined' && noaccess == true){%>

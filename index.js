@@ -14,7 +14,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 var app = express();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'public/uploads/' });
 app.set('view engine', 'ejs');
 
 const dbHost = "localhost"
@@ -112,17 +112,20 @@ app.get('/upload',(req,res)=>{
 });
 
 app.get('/upload_analysis',(req,res)=>{
-  if(req.session.user && req.session.videopath){
+  console.log(req.session.user);
+  console.log(req.session.tempvideo);
+  if(req.session.user){
+    console.log("guh");
     res.render('upload-analysis',{
       username: req.session.user,
-      mistake: req.session.mistakearray,
-      videopath: req.session.tempvideo
+      videopath: req.session.tempvideo,
+      mistake: req.session.mistakearray
     });
   }else if(!req.session.user){
     console.log("entered the unauthorized section");
     req.session.unauthorized = true;
     res.redirect('/');
-  }else if(!req.session.videopath){
+  }else if(!req.session.tempvideo){
     console.log("no access unless theres video");
     req.session.noaccess = true;
     res.redirect('/upload');
@@ -162,9 +165,36 @@ app.get('/summary',(req,res)=>{
 
 app.post('/upload_video', upload.single('file') ,async (req,res)=>{
   const filePath = req.file.path;
+  const pathForEJS = filePath.split("public\\")[1];
   const mistakeArray = await getMistakes(filePath);
-  req.session.mistakearray = mistakeArray;
-  req.session.tempvideo = filePath;
+  var mistakeObject = {
+    crosshair: new Array(),
+    dry: new Array(),
+    whiff:new Array()
+  };
+  for(var i = 0; i < mistakeArray.length; i++){
+    switch(mistakeArray[i][0]){
+      case 'crosshair':
+        if(mistakeObject.crosshair.length == 0 || (mistakeArray[i][1] - mistakeObject.crosshair[i-1]) > 10){
+          mistakeObject.crosshair.push(mistakeArray[i][1].toFixed(3));
+        }
+        break;
+      case 'dry':
+        if(mistakeObject.dry.length == 0 || (mistakeArray[i][1] - mistakeObject.dry[i-1]) > 10){
+          mistakeObject.dry.push(mistakeArray[i][1].toFixed(3));
+        }
+        break;
+      case 'whiff':
+        if(mistakeObject.whiff.length == 0 || (mistakeArray[i][1] - mistakeObject.whiff[i-1]) > 10){
+          mistakeObject.whiff.push(mistakeArray[i][1].toFixed(3));
+        }
+        break;
+    }
+  }
+
+  console.log(mistakeObject);
+  req.session.mistakearray = mistakeObject;
+  req.session.tempvideo = pathForEJS;
   res.redirect('/upload_analysis');
 });
 

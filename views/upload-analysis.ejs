@@ -24,96 +24,78 @@
                 <div class="section-analysis">
                     <div class="analysis-heading1">Analysis completed</div>
                     <div class="section-video">
+                    <video class="analysis-video" id="videoPlayer" controls>
+                        <source src="<%=videopath%>" type="video/mp4">
+                    </video>
                     </div>
                 </div>
                 <div class="section-timestamp">
                     <div class="timestamp-heading">Timestamps</div>
                     <div class="timestamp-mistake-box">
                         <div class="mistake-container"> <!--instance of 1 mistake type-->
-                            <div class="mistake-name" onmouseover="checkPopupPos(this)">Mistake 1
+                            <div class="mistake-name" onmouseover="checkPopupPos(this)">Crosshair placement
                                 <span class="mistake-popup">
                                     <div class="popup-video">
                                         <img src="valorai.jpg" alt=""/>
                                     </div>
                                     <div class="popup-info">
-                                        <div class="info-name">Mistake 1</div>
+                                        <div class="info-name">Crosshair placement</div>
                                         <div class="info-description">A short description about the mistake shown in the video</div>
                                     </div>
                                 </span>
                             </div>
                             <div class="mistake-timestamp-container">
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
+                                <% for(var i = 0; i < mistake.crosshair.length; i++){%>
+                                    <div class="timestamp-button" onclick="goToTimestamp(<%=mistake.crosshair[i]%>)">
+                                    <%var calculatedTime = new Date( null );%>
+                                    <%calculatedTime.setSeconds(mistake.crosshair[i]);%>
+                                    <%=calculatedTime.toISOString().substr( 14, 5 )%>
+                                    </div>
+                                <%}%>
                             </div>
                         </div>
                         <div class="mistake-container"> <!--instance of 1 mistake type-->
-                            <div class="mistake-name">Mistake 2
+                            <div class="mistake-name" onmouseover="checkPopupPos(this)">Dry peeking
                                 <span class="mistake-popup">
                                     <div class="popup-video">
                                         <img src="valorai.jpg" alt=""/>
                                     </div>
                                     <div class="popup-info">
-                                        <div class="info-name">Mistake 2</div>
+                                        <div class="info-name">Dry peeking</div>
                                         <div class="info-description">A short description about the mistake shown in the video</div>
                                     </div>
                                 </span>
                             </div>
                             <div class="mistake-timestamp-container">
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
+                                <% for(var i = 0; i < mistake.dry.length; i++){%>
+                                    <div class="timestamp-button" onclick="goToTimestamp(<%=mistake.dry[i]%>)">
+                                    <%var calculatedTime = new Date( null );%>
+                                    <%calculatedTime.setSeconds(mistake.dry[i]);%>
+                                    <%=calculatedTime.toISOString().substr( 14, 5 )%>
+                                    </div>
+                                <%}%>
                             </div>
                         </div>
                         <div class="mistake-container"> <!--instance of 1 mistake type-->
-                            <div class="mistake-name" onmouseover="checkPopupPos(this)">Mistake 3
+                            <div class="mistake-name" onmouseover="checkPopupPos(this)">Whiffing
                                 <span class="mistake-popup">
                                     <div class="popup-video">
                                         <img src="valorai.jpg" alt=""/>
                                     </div>
                                     <div class="popup-info">
-                                        <div class="info-name" >Mistake 3</div>
+                                        <div class="info-name" >Whiffing</div>
                                         <div class="info-description">A short description about the mistake shown in the video</div>
                                     </div>
                                 </span>
                             </div>
                             <div class="mistake-timestamp-container">
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
-                                <div class="timestamp-button">00:00</div>
+                                <% for(var i = 0; i < mistake.whiff.length; i++){%>
+                                    <div class="timestamp-button" onclick="goToTimestamp(<%=mistake.whiff[i]%>)">
+                                    <%var calculatedTime = new Date( null );%>
+                                    <%calculatedTime.setSeconds(mistake.whiff[i]);%>
+                                    <%=calculatedTime.toISOString().substr( 14, 5 )%>
+                                    </div>
+                                <%}%>
                             </div>
                         </div>
                     </div>
@@ -121,6 +103,12 @@
             </div>
         </div>
     </div>
-    
+    <script>
+    function goToTimestamp(timestamp) {
+        const video = document.getElementById('videoPlayer');
+        video.currentTime = timestamp;
+        video.play();
+    }
+    </script>
 </body>
 </html>

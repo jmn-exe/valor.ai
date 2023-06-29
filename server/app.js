@@ -62,7 +62,7 @@ async function getImage(imagePath,imageNum,timeArray){
   predArray.forEach((pred)=>{
     var maxPred = Math.max(...pred);
     if(maxPred > 0.5){
-      console.log(maxPred);
+      //console.log(maxPred);
       mistakeArr.push([className[pred.indexOf(maxPred)],timeArray[predArray.indexOf(pred)]]);
       //i += 1;
     }

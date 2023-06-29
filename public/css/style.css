@@ -283,7 +283,10 @@ a{
 }
 .section-analysis > div{
     margin-bottom: 15px;
-
+}
+.analysis-video{
+    width: 100%;
+    height: 100%;
 }
 .analysis-container{
     margin-top: 25px;
