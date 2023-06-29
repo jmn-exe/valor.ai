@@ -21,7 +21,6 @@ session_start();
 if(password_verify($pwd,$result[1])){
     $_SESSION["loggedin"] = true;
     $_SESSION["username"] = $id;
-    
     header("location: ../upload.php");
 }else{
     $_SESSION["wronglogin"] = true;
