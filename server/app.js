@@ -30,6 +30,8 @@ var startData,endData;
 var startPred,endPred;
 var mistakeArr = new Array();
 var i = 0;
+const getModel = tfn.io.fileSystem("./json_model_graph/model.json");
+const model = await tf.loadGraphModel(getModel);
 
 async function getImage(imagePath,imageNum,timeArray){
   //i need to find a way on how to feed the images extracted from ffmpeg into the canvas loadImage function, predict and loop.
@@ -49,8 +51,6 @@ async function getImage(imagePath,imageNum,timeArray){
   //const { data, width, height } = imageData;
   //const imageTensor = tf.tensor4d(videoFile, [1, height, width, 3]);
   startPred = Date.now();
-  const getModel = tfn.io.fileSystem("./json_model_graph/model.json");
-  const model = await tf.loadGraphModel(getModel);
   const predictions = model.predict(batchTensor,{
     batchSize: batchSize
   });
@@ -69,6 +69,7 @@ async function getImage(imagePath,imageNum,timeArray){
     //console.log(maxPred);
   });
   //console.log(mistakeArr);
+  batchTensor.dispose();
   console.log("boop");
   //console.log("Time to do prediction: " + (endPred - startPred));
 }
@@ -125,6 +126,8 @@ function getSS(){
 }
 
 async function getMistakes(filePath){
+  currentTime = 0;
+  currentSS = 1;
   videoPath = filePath;
   videoDuration = await getVideoDurationInSeconds(videoPath);
   await getSS();

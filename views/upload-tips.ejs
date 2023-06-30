@@ -12,10 +12,25 @@
     <div class="confirmation-box" id="confirmationBox">
         <div class="dim-background">
             <div class="save-box">
-                <div>Do you want to save the analysis?</div>
-                <div class="confirmation-button">
-                    <button class="confirmation-save">Save</button>
-                    <button class="confirmation-discard">Discard</button>
+                <button class="exit-button" onclick="hideConfirmation()">X</button>
+                <form class="box-container" action="/submit_mistake" method="post">
+                    <div>Save Analysis</div>
+                    <textarea class="text-note" id="textnote" name="textnote" rows="10" cols="30" placeholder="Write notes about this review (What you take away from it, What can you do to improve on those mistakes, etc.)"></textarea>
+                    <div class="confirmation-button">
+                        <button class="confirmation-save" type="submit">Save</button>
+                        <button class="confirmation-discard" type="button" onclick="showDiscardConfirm()">Discard</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="confirmation-box" id="discardConfirm">
+        <div class="dim-background">
+            <div class="discard-confirm">
+                <div>Confirm discard review? (All mistakes analyzed will be deleted)</div>
+                <form class="confirmation-button" action="/discard_mistake" method="post">
+                    <button class="confirmation-save" onclick="hideDiscardConfirm()">Cancel</button>
+                    <button class="confirmation-discard" type="submit">Discard</button>
                 </div>
             </div>
         </div>
@@ -27,10 +42,10 @@
             <a href="/logout" class="logged-user"><%=username%></a>
         </div>
         <div class="main-body flex-column">
-            <form class="nav-button">
-                <button type="button" class="button-nobox-style" onclick="history.back()">⟵ Back</button>
+            <div class="nav-button">
+                <button type="button" class="button-nobox-style" onclick="window.location.href = '/upload_analysis';">⟵ Back</button>
                 <button type="button" class="button-style" onclick="showConfirmation()">Save</button>
-            </form>
+            </div>
             <div class="analysis-container">
                 <div class="section-analysis">
                     <div class="analysis-heading1">Tips</div>

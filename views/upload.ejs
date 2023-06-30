@@ -64,11 +64,16 @@
                 }
                 };
                 xhr.send(formData);
-                console.log("lololol");
             }
         })
         <% if(typeof noaccess !== 'undefined' && noaccess == true){%>
-            showMessage("Please upload your video first!");
+            showMessage("Please upload your video first!","alert");
+        <%}%>
+        <% if(typeof uploadsuccess !== 'undefined' && uploadsuccess == true){%>
+            showMessage("Analysis saved","success");
+        <%}%>
+        <% if(typeof discardsuccess !== 'undefined' && discardsuccess == true){%>
+            showMessage("Analysis discard","warning");
         <%}%>
     </script>
 </body>

@@ -34,31 +34,30 @@
                             <th>Dry</th>
                             <th>Cross</th>
                             <th>Total</th>
+                            <th>Note</th>
+                            <th></th>
                         </tr>
+                        <% var i = 0 %>
+                        <% mistakedata.forEach((row)=>{%>
+                        <% i += 1 %>
                         <tr>
-                            <td>1</td>
-                            <td>13:57 - 12/12/2022</td>
-                            <td>11</td>
-                            <td>8</td>
-                            <td>3</td>
-                            <td>22</td>
+                            <td><%= i %></td>
+                            <%
+                            function pad2(num){
+                                return num.toString().padStart(2, '0');
+                            }
+                                const date = new Date(row.datetime);
+                                const datetime = date.getFullYear()+'-'+pad2(date.getMonth())+'-'+pad2(date.getDay())+' '+pad2(date.getHours())+':'+pad2(date.getMinutes());
+                            %>
+                            <td><%= datetime %></td>
+                            <td><%= row.whiff %></td>
+                            <td><%= row.drypeek %></td>
+                            <td><%= row.crosshair %></td>
+                            <td><%= row.whiff + row.drypeek + row.crosshair %></td>
+                            <td><%= row.note %></td>
+                            <td><button class="delete-match" onclick="">X</button></td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>13:57 - 12/12/2022</td>
-                            <td>11</td>
-                            <td>8</td>
-                            <td>3</td>
-                            <td>22</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>13:57 - 12/12/2022</td>
-                            <td>11</td>
-                            <td>8</td>
-                            <td>3</td>
-                            <td>22</td>
-                        </tr>
+                        <%});%>
                     </table>
                 </div>
             </div>
