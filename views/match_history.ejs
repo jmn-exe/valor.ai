@@ -20,7 +20,6 @@
                 <a href="/upload">Upload</a>
                 <a href="/summary">Summary</a>
                 <a href="" class="current-page">Match history</a>
-                <a href="">Learn</a>
             </div>
             <span class="vertical-line"></span>
             <div class="section-summary">
@@ -35,7 +34,7 @@
                             <th>Cross</th>
                             <th>Total</th>
                             <th>Note</th>
-                            <th></th>
+                            
                         </tr>
                         <% var i = 0 %>
                         <% mistakedata.forEach((row)=>{%>
@@ -55,7 +54,7 @@
                             <td><%= row.crosshair %></td>
                             <td><%= row.whiff + row.drypeek + row.crosshair %></td>
                             <td><%= row.note %></td>
-                            <td><button class="delete-match" onclick="">X</button></td>
+                            
                         </tr>
                         <%});%>
                     </table>

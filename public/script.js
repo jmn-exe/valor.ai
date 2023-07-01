@@ -55,4 +55,3 @@ function showMessage(msg,mode){
         },1000)
     },1000);
 }
-

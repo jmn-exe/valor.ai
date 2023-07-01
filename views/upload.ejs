@@ -28,7 +28,6 @@
                 <a href="" class="current-page">Upload</a>
                 <a href="/summary">Summary</a>
                 <a href="/match_history">Match history</a>
-                <a href="">Learn</a>
             </div>
             <span class="vertical-line"></span>
             <div class="section-upload">
@@ -44,27 +43,28 @@
     <script>
     var havePrevented = false;
         document.getElementById("uploadBox").addEventListener('submit',(e)=>{
-            if(!havePrevented){
-                havePrevented = true;
-                e.preventDefault();
+            e.preventDefault();
+            if(document.getElementById("videofile").files.length == 0 ){
+                showMessage("Please choose a file","alert");
+            }else{
+                document.getElementById("loadingScreen").style.display = 'block';
+                const inputFile = document.getElementById("videofile");
+                const file = inputFile.files[0];
+                if(file){
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    console.log(formData);
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/upload_video');
+                    xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        window.location.href = '/upload_analysis';
+                    }
+                    };
+                    xhr.send(formData);
+                }
             }
             
-            document.getElementById("loadingScreen").style.display = 'block';
-            const inputFile = document.getElementById("videofile");
-            const file = inputFile.files[0];
-            if(file){
-                const formData = new FormData();
-                formData.append('file', file);
-                console.log(formData);
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/upload_video');
-                xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    window.location.href = '/upload_analysis';
-                }
-                };
-                xhr.send(formData);
-            }
         })
         <% if(typeof noaccess !== 'undefined' && noaccess == true){%>
             showMessage("Please upload your video first!","alert");
@@ -73,7 +73,7 @@
             showMessage("Analysis saved","success");
         <%}%>
         <% if(typeof discardsuccess !== 'undefined' && discardsuccess == true){%>
-            showMessage("Analysis discard","warning");
+            showMessage("Analysis discarded","warning");
         <%}%>
     </script>
 </body>

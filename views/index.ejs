@@ -10,7 +10,26 @@
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 </head>
 <body>
-    
+<div class="register-popup" id="registerPopup">
+    <div class="dim-background">
+        <div class="register-box">
+            <form action="/register" method="post">
+                <div class="register-title">Register new account</div>
+                <input type="text" id="unameInput" name="username" placeholder="Username"/>
+                <div id="usernameCheck"></div>
+                <input class="password-box" id="pwdInput" name="password" type="password" placeholder="Password"/>
+                <div class="tooltip" id="passwordtooltip"></div>
+                <input type="password" id="repwdInput" placeholder="Retype password"/>
+                <div class="tooltip" id="passwordMatch"></div>
+                <div class="register-container">
+                    <button class="grey-button" type="submit" id="registerButton" disabled>Register</button>
+                    <button onclick="hideRegister();" class="grey-button" type="button">Cancel</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
     <div class="white-background"></div>
     <div class="main-container flex-center">
         <div class="home-container">
@@ -32,7 +51,7 @@
                         </div>
                         <div class="login-button-box">
                             <button type="submit"  class="login-btn">Login</button>
-                            <button type="button" class="register-btn">Register</button>
+                            <button type="button" class="register-btn" onclick="showRegister()">Register</button>
                         </div>
                     </form>
                 </div>
@@ -46,6 +65,106 @@
         <% if(typeof unauthorized !== 'undefined' && unauthorized == true){ %>
             showMessage("Please login first!","alert");
         <%}%>
+        <% if(typeof regsuccess !== 'undefined' && regsuccess == true){ %>
+            showMessage("Account successfully registered","success");
+        <%}%>
+        var infoCheck = [false,false,false];
+        const unameInput = document.getElementById("unameInput");
+        const pwdInput = document.getElementById("pwdInput");
+        const repwdInput = document.getElementById("repwdInput");
+        const userCheck = document.getElementById("usernameCheck");
+        const pwdTooltip = document.getElementById("passwordtooltip");
+        const pwdMatch = document.getElementById("passwordMatch");
+        function checkRegInfo(){
+            var i = 0;
+            infoCheck.forEach((info)=>{
+                if(info) i++;
+            });
+            if(i == 3){
+                document.getElementById("registerButton").classList.remove("grey-button");
+                document.getElementById("registerButton").disabled = false;
+            }else{
+                document.getElementById("registerButton").classList.add("grey-button");
+                document.getElementById("registerButton").disabled = true;
+            }
+        }
+        async function checkPwd(){
+            const password = pwdInput.value;
+            if(password.length == 0){
+                pwdTooltip.textContent = '';
+            }else{
+                if(password.length >= 6 && password.length <= 32){
+                    infoCheck[1] = true;
+                    pwdTooltip.textContent = 'Password is good.';
+                    pwdTooltip.classList.remove("unavailable");
+                    pwdTooltip.classList.add("available");
+                }else{
+                    infoCheck[1] = false;
+                    pwdTooltip.textContent = 'Password must be 6 - 32 characters long';
+                    pwdTooltip.classList.remove("available");
+                    pwdTooltip.classList.add("unavailable");
+                }   
+            }
+        }
+        async function checkRepwd(){
+            const password = repwdInput.value;
+            if(password.length == 0){
+                pwdMatch.textContent = '';
+            }else{
+                if(password != pwdInput.value){
+                    infoCheck[2] = false;
+                    pwdMatch.textContent = 'Password does not match';
+                    pwdMatch.classList.remove("available");
+                    pwdMatch.classList.add("unavailable");
+                }else{
+                    infoCheck[2] = true;
+                    pwdMatch.textContent = 'Password match';
+                    pwdMatch.classList.remove("unavailable");
+                    pwdMatch.classList.add("available");
+                }
+            }
+        };
+        unameInput.addEventListener("input",async()=>{
+            const username = unameInput.value;
+            if(username == ''){
+                userCheck.textContent = '';
+            }else{
+                try {
+                    const response = await fetch(`/check-username?username=${username}`);
+                    const data = await response.json();
+                    if (data.available){
+                        infoCheck[0] = true;
+                        userCheck.textContent = 'Username is available!';
+                        userCheck.classList.remove('unavailable');
+                        userCheck.classList.add('available');
+                    } else {
+                        infoCheck[0] = false;
+                        userCheck.textContent = 'Username is not available.';
+                        userCheck.classList.remove('available');
+                        userCheck.classList.add('unavailable');
+                    }
+                    checkRegInfo();
+                } catch (error) {
+                console.error(error);
+                // Handle error if necessary
+                }
+            }
+        });
+        pwdInput.addEventListener("input",async()=>{
+            checkPwd();
+            checkRepwd();
+            checkRegInfo(); 
+        });
+        repwdInput.addEventListener("input",async()=>{ 
+            checkRepwd();
+            checkRegInfo();
+        });
+        function showRegister(){
+            document.getElementById("registerPopup").style.display = "block";
+        }
+        function hideRegister(){
+            document.getElementById("registerPopup").style.display = "none";
+        }
     </script>
 </body>
 </html>

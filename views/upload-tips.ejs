@@ -29,7 +29,7 @@
             <div class="discard-confirm">
                 <div>Confirm discard review? (All mistakes analyzed will be deleted)</div>
                 <form class="confirmation-button" action="/discard_mistake" method="post">
-                    <button class="confirmation-save" onclick="hideDiscardConfirm()">Cancel</button>
+                    <button class="confirmation-save" onclick="hideDiscardConfirm()" type="button">Cancel</button>
                     <button class="confirmation-discard" type="submit">Discard</button>
                 </div>
             </div>
@@ -50,27 +50,15 @@
                 <div class="section-analysis">
                     <div class="analysis-heading1">Tips</div>
                     <div class="tips-container">
+                    <% tips.forEach((tip)=>{%>
                         <div class="tips-instance">
-                            <div class="tips-name">Tips #1</div>
+                            <div class="tips-name"><%=tip[0].name%></div>
                             <div class="tips-video">
-                                <img src="valorai.jpg" alt="">
+                                <img src="<%= tip[1].url %>" alt="">
                             </div>
-                            <div class="tips-description">Description of the tips. Long long long long long long long long long texts about the description of the tips.</div>
+                            <div class="tips-description"><%= tip[0].description %></div>
                         </div>
-                        <div class="tips-instance">
-                            <div class="tips-name">Tips #2</div>
-                            <div class="tips-video">
-                                <img src="valorai.jpg" alt="">
-                            </div>
-                            <div class="tips-description">Description of the tips. Long long long long long long long long long texts about the description of the tips.</div>
-                        </div>
-                        <div class="tips-instance">
-                            <div class="tips-name">Tips #3</div>
-                            <div class="tips-video">
-                                <img src="valorai.jpg" alt="">
-                            </div>
-                            <div class="tips-description">Description of the tips. Long long long long long long long long long texts about the description of the tips.</div>
-                        </div>
+                    <%});%>
                     </div>
                 </div>
                 

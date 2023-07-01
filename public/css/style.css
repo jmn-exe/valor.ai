@@ -494,6 +494,7 @@ table, tr, td, th{
     color:white;
 }
 .confirmation-box{
+    z-index:123;
     position: absolute;
 }
 .dim-background{
@@ -552,4 +553,60 @@ table, tr, td, th{
     background-color: white;
     padding: 20px;
 
+}
+
+.register-popup{
+    display:none;
+    z-index: 69;
+}
+.register-box{
+    background-color: white;
+    border: 1px solid grey;
+}
+.register-box form{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 350px;
+}
+.register-box form input{
+    background-color: #e6e6e6;
+    margin: 5px 20px;
+    padding: 5px;
+    height: 30px;
+    width: 75%;
+}
+.tooltip{
+    font-size: 12px;
+    color:#666666;
+}
+.register-title{
+    font-size: 24px;
+    padding: 20px;
+}
+.register-box form button{
+    height: 48px;
+    font-size: 14px;
+    margin: 10px;
+    padding: 5px 20px;
+    background-color: rgb(54, 182, 54);
+    color:white;
+}
+#usernameCheck{
+    font-size: 12px;
+    color:#666666;
+}
+.unavailable{
+    color:red !important;
+}
+.available{
+    color:rgb(45, 173, 45) !important;
+}
+.grey-button{
+    background-color: #adadad !important;
+}
+.register-container{
+    display:flex;
+    flex-direction: row;
 }

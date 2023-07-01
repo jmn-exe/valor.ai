@@ -9,6 +9,18 @@
     <script src="script.js"></script>
 </head>
 <body>
+<div class="confirmation-box" id="discardConfirm">
+        <div class="dim-background">
+            <div class="discard-confirm">
+                <div>Confirm discard review? (All mistakes analyzed will be deleted)</div>
+                <form class="confirmation-button" action="/discard_mistake" method="post">
+                    <button class="confirmation-save" onclick="hideDiscardConfirm()" type="button">Cancel</button>
+                    <button class="confirmation-discard" type="submit">Discard</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="white-background"></div>
     <div class="body-container">
         <div class="top-header">
@@ -16,10 +28,12 @@
             <a href="/logout" class="logged-user"><%=username%></a>
         </div>
         <div class="main-body flex-column">
-            <form class="nav-button" action="/upload_tips" method="get">
-                <button type="button" class="button-nobox-style" onclick="history.back()">⟵ Back</button>
-                <button type="submit" class="button-style">Next</button>
-            </form>
+            <div class="nav-button" >
+                <form class="nav-button" action="/upload_tips" method="get">
+                    <button type="button" class="button-nobox-style" onclick="showDiscardConfirm()">⟵ Back</button>
+                    <button type="submit" class="button-style">Next</button>
+                </form>
+            </div>
             <div class="analysis-container">
                 <div class="section-analysis">
                     <div class="analysis-heading1">Analysis completed</div>
@@ -36,11 +50,11 @@
                             <div class="mistake-name" onmouseover="checkPopupPos(this)">Crosshair placement
                                 <span class="mistake-popup">
                                     <div class="popup-video">
-                                        <img src="valorai.jpg" alt=""/>
+                                        <img src="<%= mistakeInfo[2][1].url %>" alt=""/>
                                     </div>
                                     <div class="popup-info">
-                                        <div class="info-name">Crosshair placement</div>
-                                        <div class="info-description">A short description about the mistake shown in the video</div>
+                                        <div class="info-name"><%= mistakeInfo[2][0].name %></div>
+                                        <div class="info-description"><%= mistakeInfo[2][0].description %></div>
                                     </div>
                                 </span>
                             </div>
@@ -58,11 +72,11 @@
                             <div class="mistake-name" onmouseover="checkPopupPos(this)">Dry peeking
                                 <span class="mistake-popup">
                                     <div class="popup-video">
-                                        <img src="valorai.jpg" alt=""/>
+                                        <img src="<%= mistakeInfo[1][1].url %>" alt=""/>
                                     </div>
                                     <div class="popup-info">
-                                        <div class="info-name">Dry peeking</div>
-                                        <div class="info-description">A short description about the mistake shown in the video</div>
+                                        <div class="info-name"><%= mistakeInfo[1][0].name %></div>
+                                        <div class="info-description"><%= mistakeInfo[1][0].description %></div>
                                     </div>
                                 </span>
                             </div>
@@ -80,11 +94,11 @@
                             <div class="mistake-name" onmouseover="checkPopupPos(this)">Whiffing
                                 <span class="mistake-popup">
                                     <div class="popup-video">
-                                        <img src="valorai.jpg" alt=""/>
+                                        <img src="<%= mistakeInfo[0][1].url %>" alt=""/>
                                     </div>
                                     <div class="popup-info">
-                                        <div class="info-name" >Whiffing</div>
-                                        <div class="info-description">A short description about the mistake shown in the video</div>
+                                        <div class="info-name" ><%= mistakeInfo[0][0].name %></div>
+                                        <div class="info-description"><%= mistakeInfo[0][0].description %></div>
                                     </div>
                                 </span>
                             </div>

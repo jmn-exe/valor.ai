@@ -32,12 +32,12 @@ var con = mysql.createConnection({
   host: dbHost,
   user: dbUser,
   password: dbPass,
-  database: dbName
+  database: dbName,
+  multipleStatements: true
 });
 
 con.connect((err)=>{
   if(err) throw(err);
-  console.log("Database connected");
 });
 
 app.use(express.static(__dirname + '/public'));
@@ -45,7 +45,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  if(req.session.unauthorized){
+  if(req.session.registerSuccess){
+    delete req.session.registerSuccess;
+    res.render('index',{regsuccess: true});
+  }else if(req.session.unauthorized){
     req.session.unauthorized = false;
     res.render('index', { unauthorized: true });
   }else if(req.session.user){
@@ -117,28 +120,36 @@ app.get('/upload',(req,res)=>{
       res.render('upload',{username: req.session.user});
     }
   }else{
-    console.log("entered the unauthorized section");
     req.session.unauthorized = true;
     res.redirect('/');
   }
 });
 
 app.get('/upload_analysis',(req,res)=>{
-  console.log(req.session.user);
-  console.log(req.session.tempvideo);
   if(req.session.user && req.session.tempvideo){
-    console.log("guh");
-    res.render('upload-analysis',{
-      username: req.session.user,
-      videopath: req.session.tempvideo,
-      mistake: req.session.mistakearray
+    const q = `SELECT * FROM mistake_data; SELECT * FROM media_data`;
+    con.query(q,(err,results)=>{
+      if(err)throw(err);
+      const w_media = results[1].find(x=>x.id===results[0][0].mediaID);
+      const d_media = results[1].find(x=>x.id===results[0][1].mediaID);
+      const c_media = results[1].find(x=>x.id===results[0][2].mediaID);
+      const mistakeInfo = [
+        [results[0][0],w_media],
+        [results[0][1],d_media],
+        [results[0][2],c_media]
+      ]
+      res.render('upload-analysis',{
+        username: req.session.user,
+        videopath: req.session.tempvideo,
+        mistake: req.session.mistakearray,
+        mistakeInfo: mistakeInfo
+      });
     });
+    
   }else if(!req.session.user){
-    console.log("entered the unauthorized section");
     req.session.unauthorized = true;
     res.redirect('/');
   }else if(!req.session.tempvideo){
-    console.log("no access unless theres video");
     req.session.noaccess = true;
     res.redirect('/upload');
   }
@@ -146,12 +157,29 @@ app.get('/upload_analysis',(req,res)=>{
 
 app.get('/upload_tips',(req,res)=>{
   if(req.session.user && req.session.mistakearray){
-    res.render('upload-tips',{
-      username: req.session.user,
-      mistake: req.session.mistakearray
+    const q = `SELECT * FROM mistake_data; SELECT * FROM tip_data; SELECT * FROM media_data`;
+    con.query(q,(err,results)=>{
+      if(err)throw(err);
+      var tipArray = new Array();
+      const w_tip = results[1].find(x=>x.id===results[0][0].tipID);
+      const d_tip = results[1].find(x=>x.id===results[0][1].tipID);
+      const c_tip = results[1].find(x=>x.id===results[0][2].tipID);
+      const w_count = req.session.mistakearray.whiff.length;
+      const d_count = req.session.mistakearray.dry.length;
+      const c_count = req.session.mistakearray.crosshair.length;
+      const w_media = results[2].find(x=>x.id===w_tip.mediaID);
+      const d_media = results[2].find(x=>x.id===d_tip.mediaID);
+      const c_media = results[2].find(x=>x.id===c_tip.mediaID);
+      if(w_count > 0) tipArray.push([w_tip,w_media]);
+      if(d_count > 0) tipArray.push([d_tip,d_media]);
+      if(c_count > 0) tipArray.push([c_tip,c_media]);
+      res.render('upload-tips',{
+        username: req.session.user,
+        mistake: req.session.mistakearray,
+        tips: tipArray
+      });
     });
-  }else{
-    console.log("entered the unauthorized section");
+  }else{;
     req.session.unauthorized = true;
     res.redirect('/');
   }
@@ -169,7 +197,6 @@ app.get('/match_history',(req,res)=>{
     })
     
   }else{
-    console.log("entered the unauthorized section");
     req.session.unauthorized = true;
     res.redirect('/');
   }
@@ -179,52 +206,76 @@ app.get('/summary',(req,res)=>{
   if(req.session.user){
     var q = `SELECT * from match_data where userID='${req.session.user}'`;
     con.query(q,(err,result,field)=>{
-      var w_count = 0;
-      var d_count = 0;
-      var c_count = 0;
-      result.forEach((row)=>{
-        w_count += row.whiff;
-        d_count += row.drypeek;
-        c_count += row.crosshair;
-      })
-      var rankArr = new Array();
-      var countArr = [w_count,d_count,c_count];
-      countArr.sort(function(a, b){return b - a});
-      countArr.forEach((num)=>{
-        switch(num){
-          case w_count:
-            rankArr.push("Whiff");
-            break;
-          case d_count:
-            rankArr.push("Dry peeking");
-            break;
-          case c_count:
-            rankArr.push("Bad crosshair placement");
-            break;
+      if(result.length == 0){
+        const mistakeData = {
+          totalmatch: 0,
+          totalmistake: 0,
+          percentage: "0%",
+          lastmatch: [],
+          mistake: {
+            rank: ['Whiff','Dry peeking','Bad crosshair placement'],
+            count: [0,0,0]
+          }
         }
-      });
-      const lastMatch = result[result.length - 1];
-      const prevMatch = result[result.length - 2];
-      const totalMistakeLast = lastMatch.whiff + lastMatch.drypeek + lastMatch.crosshair;
-      const totalMistakePrev = prevMatch.whiff + prevMatch.drypeek + prevMatch.crosshair;
-      const mistakeData = {
-        totalmatch: result.length,
-        totalmistake: w_count + d_count + c_count,
-        percentage: (((totalMistakeLast - totalMistakePrev)/2)*100).toFixed(2).toString() + "%",
-        lastmatch: result[result.length-1],
-        mistake: {
-          rank: rankArr,
-          count: countArr
+        res.render('summary',{
+          username: req.session.user,
+          mistakedata: mistakeData
+        });
+      }else{
+        var w_count = 0;
+        var d_count = 0;
+        var c_count = 0;
+        result.forEach((row)=>{
+          w_count += row.whiff;
+          d_count += row.drypeek;
+          c_count += row.crosshair;
+        })
+        var rankArr = new Array();
+        var countArr = [w_count,d_count,c_count];
+        countArr.sort(function(a, b){return b - a});
+        countArr.forEach((num)=>{
+          switch(num){
+            case w_count:
+              rankArr.push("Whiff");
+              break;
+            case d_count:
+              rankArr.push("Dry peeking");
+              break;
+            case c_count:
+              rankArr.push("Bad crosshair placement");
+              break;
+          }
+        });
+        var totalMistakeLast;
+        var totalMistakePrev;
+        if(result.length == 1){
+          totalMistakeLast = 0;
+          totalMistakePrev = 0;
+        }else{
+          const lastMatch = result[result.length - 1];
+          const prevMatch = result[result.length - 2];
+          totalMistakeLast = lastMatch.whiff + lastMatch.drypeek + lastMatch.crosshair;
+          totalMistakePrev = prevMatch.whiff + prevMatch.drypeek + prevMatch.crosshair;
         }
+        const mistakeData = {
+          totalmatch: result.length,
+          totalmistake: w_count + d_count + c_count,
+          percentage: (((totalMistakeLast - totalMistakePrev)/2)*100).toFixed(2).toString() + "%",
+          lastmatch: result[result.length-1],
+          mistake: {
+            rank: rankArr,
+            count: countArr
+          }
+        }
+        res.render('summary',{
+          username: req.session.user,
+          mistakedata: mistakeData
+        });
       }
-      res.render('summary',{
-        username: req.session.user,
-        mistakedata: mistakeData
-      });
+      
     })
     
   }else{
-    console.log("entered the unauthorized section");
     req.session.unauthorized = true;
     res.redirect('/');
   }
@@ -258,7 +309,6 @@ app.post('/upload_video', upload.single('file') ,async (req,res)=>{
         break;
     }
   }
-  console.log(mistakeObject);
   req.session.mistakearray = mistakeObject;
   req.session.tempvideo = pathForEJS;
   res.redirect('/upload_analysis');
@@ -274,10 +324,8 @@ app.post('/submit_mistake',(req,res)=>{
   VALUES(now(),'${user}',${w_count},${d_count},${c_count},'${note}')`;
   con.query(q,(err)=>{
     if(err) throw(err);
-    console.log("Mistake saved!");
     fs.unlink('public\\'+req.session.tempvideo,(err)=>{
       if(err)throw(err);
-      console.log("File deleted!");
       delete req.session.tempvideo;
       delete req.session.mistakearray;
       req.session.uploadsuccess = true;
@@ -289,12 +337,40 @@ app.post('/submit_mistake',(req,res)=>{
 app.post('/discard_mistake',(req,res)=>{
   fs.unlink('public\\'+req.session.tempvideo,(err)=>{
     if(err)throw(err);
-    console.log("File deleted!");
     delete req.session.tempvideo;
     delete req.session.mistakearray;
     req.session.discardsuccess = true;
     res.redirect('/upload');
   });
 });
+
+app.get('/check-username',(req,res)=>{
+  const {username} = req.query;
+  const q = `SELECT * from user WHERE id='${username}'`;
+  con.query(q,(err,result,field)=>{
+    if(err)throw(err);
+    if(result.length == 0){
+      res.json({available:true});
+    }else{
+      res.json({available:false});
+    }
+  })
+});
+
+app.post('/register',(req,res)=>{
+  const user = req.body.username;
+  const pass = req.body.password;
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(pass, salt, function(err, hash) {
+      const q = `INSERT INTO user(id,pwd)
+      VALUES('${user}','${hash}')`;
+      con.query(q,(err,result,field)=>{
+        if(err)throw(err);
+        req.session.registerSuccess = true;
+        res.redirect('/');
+      })
+    });
+})
+})
   
 app.listen(3000)
